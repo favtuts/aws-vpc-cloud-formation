@@ -31,6 +31,11 @@ aws cloudformation delete-stack --stack-name MyNetwork --profile tvt_admin
 aws cloudformation wait stack-delete-complete --stack-name MyNetwork --profile tvt_admin
 ```
 
+To check the status of stack
+```
+aws cloudformation describe-stacks --stack-name MyNetwork --profile tvt_admin
+```
+
 # Shell scripts
 
 ```
