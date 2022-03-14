@@ -94,48 +94,48 @@ Resources:
       SubnetId: !Ref PublicSubnetB
       RouteTableId: !Ref PublicRouteTable
   
-  # Here is a private route table:
-  PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-      - Key: Name
-        Value: Private
-  PrivateRoute1:            # Private route table can access web via NAT (created below)
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      # Route traffic through the NAT Gateway
-      # NatGatewayId: !Ref "AWS::NoValue"
-      NatGatewayId: !Ref NATGateway
+  # # Here is a private route table:
+  # PrivateRouteTable:
+  #   Type: AWS::EC2::RouteTable
+  #   Properties:
+  #     VpcId: !Ref VPC
+  #     Tags:
+  #     - Key: Name
+  #       Value: Private
+  # PrivateRoute1:            # Private route table can access web via NAT (created below)
+  #   Type: AWS::EC2::Route
+  #   Properties:
+  #     RouteTableId: !Ref PrivateRouteTable
+  #     DestinationCidrBlock: 0.0.0.0/0
+  #     # Route traffic through the NAT Gateway
+  #     # NatGatewayId: !Ref "AWS::NoValue"
+  #     NatGatewayId: !Ref NATGateway
   
-  # Attach the private subnets to private route tables:    
-  PrivateSubnetARouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PrivateSubnetA
-      RouteTableId: !Ref PrivateRouteTable
-  PrivateSubnetBRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PrivateSubnetB
-      RouteTableId: !Ref PrivateRouteTable
+  # # Attach the private subnets to private route tables:    
+  # PrivateSubnetARouteTableAssociation:
+  #   Type: AWS::EC2::SubnetRouteTableAssociation
+  #   Properties:
+  #     SubnetId: !Ref PrivateSubnetA
+  #     RouteTableId: !Ref PrivateRouteTable
+  # PrivateSubnetBRouteTableAssociation:
+  #   Type: AWS::EC2::SubnetRouteTableAssociation
+  #   Properties:
+  #     SubnetId: !Ref PrivateSubnetB
+  #     RouteTableId: !Ref PrivateRouteTable
 
-  # A NAT Gateway:
-  NATGateway:
-    Type: AWS::EC2::NatGateway
-    Properties: 
-      AllocationId: !GetAtt ElasticIPAddress.AllocationId
-      SubnetId: !Ref PublicSubnetA
-      Tags: 
-      - Key: Name
-        Value: !Sub NAT-${AWS::StackName}
-  ElasticIPAddress:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: VPC
+  # # A NAT Gateway:
+  # NATGateway:
+  #   Type: AWS::EC2::NatGateway
+  #   Properties: 
+  #     AllocationId: !GetAtt ElasticIPAddress.AllocationId
+  #     SubnetId: !Ref PublicSubnetA
+  #     Tags: 
+  #     - Key: Name
+  #       Value: !Sub NAT-${AWS::StackName}
+  # ElasticIPAddress:
+  #   Type: AWS::EC2::EIP
+  #   Properties:
+  #     Domain: VPC
 
   # A security group for our NAT.  Ingress from the VPC IPs only.  Egress is TCP & UDP only:
   NATSecurityGroup:
