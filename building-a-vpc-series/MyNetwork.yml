@@ -94,34 +94,31 @@ Resources:
       SubnetId: !Ref PublicSubnetB
       RouteTableId: !Ref PublicRouteTable
   
-  # # Here is a private route table:
-  # PrivateRouteTable:
-  #   Type: AWS::EC2::RouteTable
-  #   Properties:
-  #     VpcId: !Ref VPC
-  #     Tags:
-  #     - Key: Name
-  #       Value: Private
-  # PrivateRoute1:            # Private route table can access web via NAT (created below)
-  #   Type: AWS::EC2::Route
-  #   Properties:
-  #     RouteTableId: !Ref PrivateRouteTable
-  #     DestinationCidrBlock: 0.0.0.0/0
-  #     # Route traffic through the NAT Gateway
-  #     # NatGatewayId: !Ref "AWS::NoValue"
-  #     NatGatewayId: !Ref NATGateway
+  # Here is a private route table:
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: Private  
   
-  # # Attach the private subnets to private route tables:    
-  # PrivateSubnetARouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
+  # Attach the private subnets to private route tables:    
+  PrivateSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+
+  # ElasticIPAddress:
+  #   Type: AWS::EC2::EIP
   #   Properties:
-  #     SubnetId: !Ref PrivateSubnetA
-  #     RouteTableId: !Ref PrivateRouteTable
-  # PrivateSubnetBRouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     SubnetId: !Ref PrivateSubnetB
-  #     RouteTableId: !Ref PrivateRouteTable
+  #     Domain: VPC
 
   # # A NAT Gateway:
   # NATGateway:
@@ -132,10 +129,15 @@ Resources:
   #     Tags: 
   #     - Key: Name
   #       Value: !Sub NAT-${AWS::StackName}
-  # ElasticIPAddress:
-  #   Type: AWS::EC2::EIP
+  
+  # PrivateRoute1:            # Create route entry to Private route table entry to allow access web via NAT (created below)
+  #   Type: AWS::EC2::Route
   #   Properties:
-  #     Domain: VPC
+  #     RouteTableId: !Ref PrivateRouteTable
+  #     DestinationCidrBlock: 0.0.0.0/0
+  #     # Route traffic through the NAT Gateway
+  #     # NatGatewayId: !Ref "AWS::NoValue"
+  #     NatGatewayId: !Ref NATGateway
 
   # A security group for our NAT.  Ingress from the VPC IPs only.  Egress is TCP & UDP only:
   NATSecurityGroup:
