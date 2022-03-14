@@ -163,24 +163,24 @@ Resources:
         ToPort: '65535'
         CidrIp: 0.0.0.0/0
   
-  # Create VPC Endpoint to privately access DynamoDB service
-  DynamoDBEndpoint:
-    Type: "AWS::EC2::VPCEndpoint"
-    Properties:
-      RouteTableIds:
-        - !Ref PublicRouteTable
-        - !Ref PrivateRouteTable        
-      ServiceName:
-        !Sub "com.amazonaws.${AWS::Region}.dynamodb"
-      VpcId: !Ref VPC
+  # # Create VPC Endpoint to privately access DynamoDB service
+  # DynamoDBEndpoint:
+  #   Type: "AWS::EC2::VPCEndpoint"
+  #   Properties:
+  #     RouteTableIds:
+  #       - !Ref PublicRouteTable
+  #       - !Ref PrivateRouteTable        
+  #     ServiceName:
+  #       !Sub "com.amazonaws.${AWS::Region}.dynamodb"
+  #     VpcId: !Ref VPC
   
-  # Create VPC Endpoint to privately access S3 service
-  S3Endpoint:
-    Type: "AWS::EC2::VPCEndpoint"
-    Properties:
-      RouteTableIds:
-        - !Ref PublicRouteTable
-        - !Ref PrivateRouteTable
-      ServiceName:
-        !Sub "com.amazonaws.${AWS::Region}.s3"
-      VpcId: !Ref VPC
+  # # Create VPC Endpoint to privately access S3 service
+  # S3Endpoint:
+  #   Type: "AWS::EC2::VPCEndpoint"
+  #   Properties:
+  #     RouteTableIds:
+  #       - !Ref PublicRouteTable
+  #       - !Ref PrivateRouteTable
+  #     ServiceName:
+  #       !Sub "com.amazonaws.${AWS::Region}.s3"
+  #     VpcId: !Ref VPC
