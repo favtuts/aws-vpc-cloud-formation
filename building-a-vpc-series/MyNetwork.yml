@@ -1,5 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 # This CloudFormation template deploys a basic VPC / Network. 
+Description: >
+  This CloudFormation template deploys a basic VPC / Network, complete with subnets, NATting, route tables,etc.
 Resources:
   # First, a VPC:
   VPC:
@@ -72,7 +74,6 @@ Resources:
       Tags:
       - Key: Name
         Value: Public
-  
   PublicRoute1:   # Public route table has direct routing to IGW:
     Type: AWS::EC2::Route
     DependsOn: AttachGateway
@@ -80,3 +81,42 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
+  
+  # Here is a private route table:
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: Private
+  PrivateRoute1:            # Private route table can access web via NAT (created below)
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      # Route traffic through the NAT Gateway, at this time we don't create NAT Gateway
+      NatGatewayId: !Ref "AWS::NoValue"
+  
+  # Attach the public subnets to public route tables, 
+  # and attach the private subnets to private route tables:    
+  PublicSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+  PrivateSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
